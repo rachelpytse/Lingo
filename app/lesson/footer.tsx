@@ -8,7 +8,7 @@ type Props = {
     onCheck: () => void;
     status: "correct" | "wrong" | "none" | "completed";
     disabled?: boolean;
-    lessonId?: boolean;
+    lessonId?: number;
 }
 
 export const Footer = ({
@@ -43,6 +43,7 @@ export const Footer = ({
                     <Button
                         variant="default"
                         size={isMobile ? "sm" : "lg"}
+                        //use this instead of router to cause a full refresh of app
                         onClick={() => window.location.href = `/lesson/${lessonId}`}
                     >
                         Practice again
