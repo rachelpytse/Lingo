@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import Confetti from "react-confetti"
 import { useRouter } from "next/navigation";
-import { useAudio, useWindowSize } from "react-use";
+import { useAudio, useWindowSize, useMount } from "react-use";
 import { useState, useTransition } from "react";
 import { reduceHearts } from "@/actions/user-progress";
 import { challengeOptions, challenges } from "@/db/schema";
@@ -14,6 +14,8 @@ import { Footer } from "./footer";
 import { Challenge } from "./challenge";
 import { QuestionBubble } from "./question-bubble";
 import { ResultCard } from "./result-card";
+import { useHeartsModal } from "@/store/use-hearts-modal";
+import { usePracticeModal } from "@/store/use-practice-modal";
 
 type Props = {
     initialPercentage: number;
@@ -33,6 +35,15 @@ export const Quiz = ({
     initialLessonChallenges,
     userSubscription,
 }: Props) => {
+    const {open: openHeartsModal} = useHeartsModal()
+    const {open: openPracticeModal} = usePracticeModal()
+
+    useMount(() => {
+        if(initialPercentage === 100) {
+            openPracticeModal()
+        }
+    })
+
     const {width, height} = useWindowSize()
 
     const router = useRouter()
@@ -53,7 +64,10 @@ export const Quiz = ({
     //lessonId can only be changed from outside
     const [lessonId] = useState(initialLessonId)
     const [hearts, setHearts] = useState(initialHearts)
-    const [percentage, setPercentage] = useState(initialPercentage)
+    const [percentage, setPercentage] = useState(() => {
+        //to pretend restart for the practice, so the points bar will not appear full when user practice again
+        return initialPercentage === 100 ? 0 : initialPercentage
+    })
     const [challenges] = useState(initialLessonChallenges)
     // navigate what user is currently on 
     const [activeIndex, setActiveIndex] = useState(() => {
@@ -105,7 +119,7 @@ export const Quiz = ({
                 upsertChallengeProgress(challenge.id)
                     .then((response) => {
                         if(response?.error === "hearts") {
-                            console.error("Missing hearts")
+                            openHeartsModal()
                             return
                         }
 
@@ -127,7 +141,7 @@ export const Quiz = ({
                 reduceHearts(challenge.id)
                     .then((response) => {
                         if(response?.error === "hearts") {
-                            console.error("Missing hearts")
+                            openHeartsModal()
                             return
                         }
 

@@ -43,7 +43,8 @@ export const Footer = ({
                     <Button
                         variant="default"
                         size={isMobile ? "sm" : "lg"}
-                        //use this instead of router to cause a full refresh of app
+                        //use this instead of router to tigger the useMount
+                        //to cause a full refresh of app to show the practice modal
                         onClick={() => window.location.href = `/lesson/${lessonId}`}
                     >
                         Practice again
