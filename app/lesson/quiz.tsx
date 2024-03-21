@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAudio, useWindowSize, useMount } from "react-use";
 import { useState, useTransition } from "react";
 import { reduceHearts } from "@/actions/user-progress";
-import { challengeOptions, challenges } from "@/db/schema";
+import { challengeOptions, challenges, userSubscription } from "@/db/schema";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
 import { Header } from "./header";
 import { Footer } from "./footer";
@@ -25,7 +25,9 @@ type Props = {
         completed: boolean;
         challengeOptions: typeof challengeOptions.$inferSelect[];
     })[]
-    userSubscription: any; //TODO: replace with subscription db type
+    userSubscription: typeof userSubscription.$inferSelect & {
+        isActive: boolean;
+    } | null;
 }
 
 export const Quiz = ({
@@ -160,7 +162,6 @@ export const Quiz = ({
         }
     }
 
-    //TODO: remove true
     if(!challenge) {
         return(
             <>
