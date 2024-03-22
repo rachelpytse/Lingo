@@ -1,10 +1,10 @@
-import db from "@/db/drizzle";
-import { userSubscription } from "@/db/schema";
-import { stripe } from "@/lib/stripe";
+import Stripe from "stripe";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers"
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import db from "@/db/drizzle";
+import { stripe } from "@/lib/stripe";
+import { userSubscription } from "@/db/schema";
 
 export async function POST(req: Request) {
     const body = await req.text()
@@ -19,9 +19,9 @@ export async function POST(req: Request) {
             process.env.STRIPE_WEBHOOK_SECRET!,
         )
     } catch(error: any) {
-        return new NextResponse(`Webhook error: ${error.message}`), {
+        return new NextResponse(`Webhook error: ${error.message}`, {
             status: 400,
-        }
+        })
     }
 
     const session = event.data.object as Stripe.Checkout.Session
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     if(event.type === "checkout.session.completed") {
         const subscription = await stripe.subscriptions.retrieve(
             session.subscription as string
-        )
+        );
 
         if(!session?.metadata?.userId) {
             return new NextResponse("User ID is required", {status: 400})
@@ -45,8 +45,8 @@ export async function POST(req: Request) {
             stripeCurrentPeriodEnd: new Date(
                 //to ensure the timestamp is correctly represented in javascript db by turning them into ms
                 subscription.current_period_end * 1000,
-            )
-        })
+            ),
+        });
     }
 
     //if renewing
