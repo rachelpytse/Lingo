@@ -1,6 +1,8 @@
-[Deployed app link](https://lingo-beige.vercel.app/learn)
+## Deployed app link
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Try the app -> [Lingo](https://lingo-beige.vercel.app/learn)
+
+![Lingo](lingo.png)
 
 ## Getting Started
 
